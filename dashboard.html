@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แดชบอร์ดสรุปผล - บันทึกเวลาเข้าโรงเรียน</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+  <div class="container dashboard-container">
+    <div class="header">
+      <i class="ph-fill ph-chart-pie-slice" style="font-size: 48px; color: var(--primary-color);"></i>
+      <h1>แดชบอร์ดสรุปจำนวนคนเข้าโรงเรียน</h1>
+      <p>ข้อมูลทั้งหมดดึงมาจาก Google Sheets แบบเรียลไทม์</p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingDashboard" style="text-align: center; padding: 40px;">
+      <i class="ph ph-spinner ph-spin" style="font-size: 32px; color: var(--primary-color);"></i>
+      <p style="margin-top: 10px; color: var(--text-muted);">กำลังโหลดข้อมูล...</p>
+    </div>
+
+    <div id="dashboardContent" style="display: none;">
+      <!-- Stats Grid -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <h3>จำนวนผู้เข้าโรงเรียนทั้งหมด</h3>
+          <p id="totalCount">0</p>
+        </div>
+        <!-- Color stats will be injected here by JS -->
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-container">
+        <button class="tab-btn active" id="btnTabRecent" onclick="switchTab('recent')">ประวัติล่าสุด</button>
+        <button class="tab-btn" id="btnTabOutside" onclick="switchTab('outside')">
+          กำลังอยู่นอกโรงเรียน <span id="outsideCount" class="tab-badge">0</span>
+        </button>
+      </div>
+
+      <!-- Recent Entries Table -->
+      <div id="tab-recent" class="recent-table-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h3 style="color: var(--text-main); font-size: 16px; margin: 0;">ประวัติการเข้า-ออก</h3>
+            <select id="rowCountSelect" onchange="updateRecentTable()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color); font-family: inherit; font-size: 13px; color: var(--text-main); cursor: pointer;">
+              <option value="20">20 ล่าสุด</option>
+              <option value="50">50 ล่าสุด</option>
+              <option value="100">100 ล่าสุด</option>
+              <option value="all">ทั้งหมด</option>
+            </select>
+          </div>
+          <button id="deleteAllBtn" class="btn-danger" style="padding: 6px 12px; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 5px;" onclick="deleteAllData()">
+            <i class="ph ph-trash"></i> ล้างข้อมูลทั้งหมด
+          </button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>เวลาบันทึก</th>
+              <th>รายการ</th>
+              <th>ชื่อ - นามสกุล (และเหตุผล)</th>
+              <th>ระดับชั้น</th>
+              <th>คณะสี</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="recentTableBody">
+            <!-- Data injected here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Outside Entries Table -->
+      <div id="tab-outside" class="recent-table-container" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3 style="color: var(--text-main); font-size: 16px; margin: 0;">นักเรียนที่อยู่นอกโรงเรียน (ยังไม่กลับ)</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>เวลาที่ออก</th>
+              <th>ชื่อ - นามสกุล (และเหตุผล)</th>
+              <th>ระดับชั้น</th>
+              <th>คณะสี</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="outsideTableBody">
+            <!-- Data injected here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="entry.html" class="btn-outline">ไปหน้าบันทึกเวลาเข้าโรงเรียน &rarr;</a>
+      <a href="exit.html" class="btn-outline btn-outline-red">ไปหน้าบันทึกเวลาออกโรงเรียน &rarr;</a>
+      <a href="index.html" class="nav-link" style="margin-top: 5px;">&larr; กลับหน้าเมนูหลัก</a>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalStudentName" style="margin:0; font-size: 18px; color: var(--text-main);">ประวัติการเข้า-ออก</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalHistoryContent">
+        <!-- History details will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', fetchDashboardData);
+  </script>
+</body>
+</html>

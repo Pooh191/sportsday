@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บันทึกเวลาเข้าโรงเรียน</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <i class="ph-fill ph-sign-in" style="font-size: 48px; color: var(--primary-color);"></i>
+      <h1>บันทึกเวลาเข้าโรงเรียน</h1>
+      <p>กรุณากรอกข้อมูลเพื่อบันทึกเวลาเข้าโรงเรียน</p>
+    </div>
+
+    <form id="entryForm">
+      <input type="hidden" id="actionType" value="เข้า">
+
+      <div class="form-group">
+        <label for="namePrefix">คำนำหน้านาม</label>
+        <select id="namePrefix" name="namePrefix" required>
+          <option value="" disabled selected>-- เลือกคำนำหน้า --</option>
+          <option value="เด็กชาย">เด็กชาย</option>
+          <option value="เด็กหญิง">เด็กหญิง</option>
+          <option value="นาย">นาย</option>
+          <option value="นางสาว">นางสาว</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">ชื่อ - นามสกุล</label>
+        <input type="text" id="fullName" name="fullName" placeholder="เช่น สมชาย ใจดี (ไม่ต้องใส่คำนำหน้า)" required>
+      </div>
+
+      <div class="form-group">
+        <label for="className">ระดับชั้น</label>
+        <input type="text" id="className" name="className" placeholder="เช่น ม.4/1" required>
+      </div>
+
+      <div class="form-group">
+        <label for="colorGroup">คณะสี</label>
+        <select id="colorGroup" name="colorGroup" required>
+          <option value="" disabled selected>-- เลือกคณะสี --</option>
+          <option value="สีขาว">สีขาว</option>
+          <option value="สีแดง">สีแดง</option>
+          <option value="สีม่วง">สีม่วง</option>
+          <option value="สีชมพู">สีชมพู</option>
+          <option value="สีแสด">สีแสด</option>
+          <option value="สีฟ้า">สีฟ้า</option>
+          <option value="สภานักเรียน">สภานักเรียน</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span class="btn-text">บันทึกเวลาเข้า</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="nav-buttons">
+      <a href="exit.html" class="btn-outline btn-outline-red">ไปหน้าบันทึกเวลาออกโรงเรียน &rarr;</a>
+      <a href="dashboard.html" class="btn-outline btn-outline-green">ดูแดชบอร์ดสรุปผล &rarr;</a>
+      <a href="index.html" class="nav-link" style="margin-top: 5px;">&larr; กลับหน้าเมนูหลัก</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

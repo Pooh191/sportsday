@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บันทึกเวลาออกโรงเรียน</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <i class="ph-fill ph-sign-out" style="font-size: 48px; color: #dc2626;"></i>
+      <h1 style="color: #dc2626;">บันทึกเวลาออกโรงเรียน</h1>
+      <p>ค้นหาชื่อของคุณเพื่อบันทึกการออกนอกสถานศึกษา</p>
+    </div>
+
+    <!-- Loading Data Indicator -->
+    <div id="loadingData" style="text-align: center; margin-bottom: 20px;">
+      <i class="ph ph-spinner ph-spin" style="font-size: 24px; color: var(--text-muted);"></i>
+      <span style="color: var(--text-muted); font-size: 14px;">กำลังโหลดฐานข้อมูลนักเรียน...</span>
+    </div>
+
+    <form id="exitForm" style="display: none;">
+      <input type="hidden" id="actionType" value="ออก">
+      <input type="hidden" id="namePrefix" value="">
+
+      <div class="form-group autocomplete-container">
+        <label for="searchName">ค้นหาชื่อ - นามสกุล</label>
+        <input type="text" id="searchName" placeholder="พิมพ์ชื่อเพื่อค้นหา (เช่น สมชาย)" autocomplete="off" required>
+        <div id="autocompleteResults" class="autocomplete-dropdown"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="readonlyClass">ระดับชั้น</label>
+        <input type="text" id="readonlyClass" class="readonly-input" readonly placeholder="จะแสดงอัตโนมัติเมื่อเลือกชื่อ">
+      </div>
+
+      <div class="form-group">
+        <label for="readonlyColor">คณะสี</label>
+        <input type="text" id="readonlyColor" class="readonly-input" readonly placeholder="จะแสดงอัตโนมัติเมื่อเลือกชื่อ">
+      </div>
+
+      <div class="form-group">
+        <label for="exitReason">เหตุผลที่ออกนอกโรงเรียน</label>
+        <textarea id="exitReason" rows="3" placeholder="ระบุเหตุผลที่ขออนุญาตออก" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit btn-danger" id="submitBtn">
+        <span class="btn-text">บันทึกเวลาออก</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="nav-buttons">
+      <a href="entry.html" class="btn-outline">ไปหน้าบันทึกเวลาเข้าโรงเรียน &rarr;</a>
+      <a href="dashboard.html" class="btn-outline btn-outline-green">ดูแดชบอร์ดสรุปผล &rarr;</a>
+      <a href="index.html" class="nav-link" style="margin-top: 5px;">&larr; กลับหน้าเมนูหลัก</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
