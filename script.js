@@ -6,6 +6,9 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyubx4mUmGoszNZ6Vfp4
 // Global variables
 let studentDatabase = [];
 let allDashboardData = [];
+// Pagination variables
+let currentPage = 1;
+const rowsPerPage = 20;
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. หน้า Entry (เข้าโรงเรียน)
@@ -106,6 +109,27 @@ async function handleFormSubmit(e, formId) {
            document.getElementById('readonlyClass').value = '';
            document.getElementById('readonlyColor').value = '';
         }
+      });
+    } else if (result.status === 'error' && result.message === 'DUPLICATE_ENTRY') {
+      Swal.fire({
+        icon: 'error',
+        title: 'บันทึกซ้ำซ้อน!',
+        text: `นักเรียนคนนี้ (${formData.fullName}) อยู่ในโรงเรียนอยู่แล้ว ไม่สามารถบันทึกเข้าซ้ำได้ครับ`,
+        confirmButtonColor: '#dc2626'
+      });
+    } else if (result.status === 'error' && result.message === 'DUPLICATE_EXIT') {
+      Swal.fire({
+        icon: 'error',
+        title: 'บันทึกซ้ำซ้อน!',
+        text: `นักเรียนคนนี้ (${formData.fullName}) อยู่นอกโรงเรียนอยู่แล้ว ไม่สามารถบันทึกออกซ้ำได้ครับ`,
+        confirmButtonColor: '#dc2626'
+      });
+    } else if (result.status === 'error' && result.message === 'NOT_FOUND') {
+      Swal.fire({
+        icon: 'error',
+        title: 'ไม่พบประวัติเข้า!',
+        text: `นักเรียนคนนี้ยังไม่เคยบันทึกเข้าโรงเรียน จึงไม่สามารถกดออกได้ครับ`,
+        confirmButtonColor: '#dc2626'
       });
     } else {
       throw new Error("API Error");
@@ -472,22 +496,27 @@ function updateRecentTable() {
   if (!tbody) return;
   tbody.innerHTML = '';
   
-  const limitValue = document.getElementById('rowCountSelect').value;
   let recentData = [...allDashboardData]; // ดึงจาก Global Variable
-  
-  if (limitValue !== 'all') {
-    const limit = parseInt(limitValue, 10);
-    recentData = recentData.slice(-limit);
-  }
-  
   recentData.reverse(); // ใหม่ล่าสุดขึ้นก่อน
 
-  if (recentData.length === 0) {
+  // Pagination Logic
+  const totalRows = recentData.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+  
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedData = recentData.slice(startIndex, endIndex);
+
+  if (paginatedData.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">ยังไม่มีข้อมูล</td></tr>';
+    renderPagination(1, 1);
     return;
   }
 
-  recentData.forEach(row => {
+  paginatedData.forEach(row => {
     const tr = document.createElement('tr');
     
     // ป้ายคณะสี
@@ -534,4 +563,22 @@ function updateRecentTable() {
     `;
     tbody.appendChild(tr);
   });
+  
+  renderPagination(currentPage, totalPages);
+}
+
+function renderPagination(current, total) {
+  const container = document.getElementById('paginationControls');
+  if (!container) return;
+
+  container.innerHTML = `
+    <button class="page-btn" onclick="changePage(${current - 1})" ${current <= 1 ? 'disabled' : ''}>&larr; ก่อนหน้า</button>
+    <span class="page-info">หน้า ${current} จาก ${total}</span>
+    <button class="page-btn" onclick="changePage(${current + 1})" ${current >= total ? 'disabled' : ''}>ถัดไป &rarr;</button>
+  `;
+}
+
+function changePage(newPage) {
+  currentPage = newPage;
+  updateRecentTable();
 }
