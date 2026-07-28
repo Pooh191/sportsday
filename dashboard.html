@@ -46,15 +46,7 @@
       <!-- Recent Entries Table -->
       <div id="tab-recent" class="recent-table-container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <h3 style="color: var(--text-main); font-size: 16px; margin: 0;">ประวัติการเข้า-ออก</h3>
-            <select id="rowCountSelect" onchange="updateRecentTable()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color); font-family: inherit; font-size: 13px; color: var(--text-main); cursor: pointer;">
-              <option value="20">20 ล่าสุด</option>
-              <option value="50">50 ล่าสุด</option>
-              <option value="100">100 ล่าสุด</option>
-              <option value="all">ทั้งหมด</option>
-            </select>
-          </div>
+          <h3 style="color: var(--text-main); font-size: 16px; margin: 0;">ประวัติการเข้า-ออก</h3>
           <button id="deleteAllBtn" class="btn-danger" style="padding: 6px 12px; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 5px;" onclick="deleteAllData()">
             <i class="ph ph-trash"></i> ล้างข้อมูลทั้งหมด
           </button>
@@ -74,6 +66,8 @@
             <!-- Data injected here -->
           </tbody>
         </table>
+        <!-- Pagination Controls -->
+        <div id="paginationControls" class="pagination-container"></div>
       </div>
 
       <!-- Outside Entries Table -->
