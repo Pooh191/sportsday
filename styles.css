@@ -497,6 +497,39 @@ td {
   color: #dc2626;
 }
 
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+.page-btn {
+  background: white;
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: all 0.2s;
+  font-family: inherit;
+  font-size: 14px;
+}
+.page-btn:hover:not(:disabled) {
+  background: var(--bg-color);
+}
+.page-btn:disabled {
+  background: var(--bg-color);
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+.page-info {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 10px;
+}
+
 .modal-overlay.show {
   display: flex;
   opacity: 1;
