@@ -86,7 +86,8 @@ async function handleFormSubmit(e, formId) {
     const classVal = document.getElementById('readonlyClass').value;
     formData.className = classVal.startsWith("'") ? classVal : "'" + classVal;
     formData.colorGroup = document.getElementById('readonlyColor').value;
-    formData.reason = document.getElementById('exitReason').value;
+    formData.purpose = document.getElementById('exitPurpose').value;
+    formData.reason = document.getElementById('exitNote').value;
   }
 
   try {
@@ -349,7 +350,10 @@ function renderDashboard(data) {
         else if (row.color === 'สีฟ้า') colorClass = 'badge-ฟ้า';
         else if (row.color === 'สภานักเรียน') colorClass = 'badge-สภานักเรียน';
 
-        const reasonText = row.reason ? `<br><small style="color:#6b7280;">เหตุผล: ${row.reason}</small>` : '';
+        let reasonText = '';
+        if (row.purpose) reasonText += `<br><small style="color:#6b7280;">เหตุผลที่ออก: ${row.purpose}</small>`;
+        if (row.reason) reasonText += `<br><small style="color:#6b7280;">หมายเหตุ: ${row.reason}</small>`;
+
         const fullName = (row.prefix || '') + ' ' + (row.name || '-');
 
         let displayTime = row.timestamp || '-';
@@ -484,7 +488,9 @@ function viewHistory(name) {
         ? `<span style="color:#dc2626; font-weight:bold;">ออกนอกโรงเรียน</span>`
         : `<span style="color:#16a34a; font-weight:bold;">เข้าโรงเรียน</span>`;
 
-      const reasonText = item.reason ? `<div style="font-size: 13px; color: #6b7280; margin-top: 4px;">เหตุผล: ${item.reason}</div>` : '';
+      let reasonText = '';
+      if (item.purpose) reasonText += `<div style="font-size: 13px; color: #6b7280; margin-top: 4px;">เหตุผลที่ออก: ${item.purpose}</div>`;
+      if (item.reason) reasonText += `<div style="font-size: 13px; color: #6b7280; margin-top: 4px;">หมายเหตุ: ${item.reason}</div>`;
 
       let displayTime = item.timestamp || '-';
       if (typeof displayTime === 'string' && displayTime.includes('T') && displayTime.includes('Z')) {
@@ -553,8 +559,10 @@ function updateRecentTable() {
       ? `<span style="color:#dc2626; font-weight:bold;">${row.action}</span>`
       : `<span style="color:#16a34a; font-weight:bold;">${row.action}</span>`;
 
-    // เหตุผล
-    const reasonText = row.reason ? `<br><small style="color:#6b7280;">เหตุผล: ${row.reason}</small>` : '';
+    // เหตุผลและหมายเหตุ
+    let reasonText = '';
+    if (row.purpose) reasonText += `<br><small style="color:#6b7280;">เหตุผลที่ออก: ${row.purpose}</small>`;
+    if (row.reason) reasonText += `<br><small style="color:#6b7280;">หมายเหตุ: ${row.reason}</small>`;
 
     const fullName = (row.prefix || '') + ' ' + (row.name || '-');
 
