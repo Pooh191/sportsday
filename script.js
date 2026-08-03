@@ -277,7 +277,10 @@ async function fetchDashboardData() {
     }
   } catch (error) {
     console.error(error);
-    if (loading) loading.innerHTML = '<p style="color:red;">ไม่สามารถโหลดข้อมูลจาก Google Sheets ได้ กรุณาลองใหม่อีกครั้ง</p>';
+    let msg = 'ไม่สามารถโหลดข้อมูลจาก Google Sheets ได้ กรุณาลองใหม่อีกครั้ง';
+    if (error.name === 'SyntaxError') msg = 'การตอบกลับไม่ใช่ JSON (URL อาจจะผิด ถูกลบ หรือไม่ได้เปิดสิทธิ์เป็น "Anyone")';
+    else if (error.message.includes('Failed to fetch')) msg = 'เชื่อมต่อไม่ได้ (CORS Error) กรุณาตรวจสอบการ Deploy Web App (ต้องตั้งเป็น "Anyone")';
+    if (loading) loading.innerHTML = `<p style="color:red;">${msg}<br><small>Error: ${error.toString()}</small></p>`;
   }
 }
 
