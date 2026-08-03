@@ -1,7 +1,7 @@
 /**
  * ตั้งค่า URL ของ Web App ที่ได้จาก Google Apps Script ที่นี่
  */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyubx4mUmGoszNZ6Vfp4k2HBiSA7lRz0kd8dkc82h4mERbszEc1fpn5zEN-KEQa2ayHWw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd_7VC3h-blqmvfbwG82raeO56rI_BGCI8X8WRO0q38warv-qm-Kh4Eo34xpDVEerepw/exec";
 
 // Global variables
 let studentDatabase = [];
