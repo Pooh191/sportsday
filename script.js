@@ -131,15 +131,31 @@ async function handleFormSubmit(e, formId) {
         text: `นักเรียนคนนี้ยังไม่เคยบันทึกเข้าโรงเรียน จึงไม่สามารถกดออกได้ครับ`,
         confirmButtonColor: '#dc2626'
       });
+    } else if (result.status === 'error') {
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาดจากระบบ',
+        text: result.message || 'ไม่ทราบสาเหตุ',
+        confirmButtonColor: '#dc2626'
+      });
     } else {
       throw new Error("API Error");
     }
   } catch (error) {
     console.error(error);
+    let errorMessage = 'ไม่สามารถบันทึกข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่อ';
+    
+    // ตรวจสอบว่าเป็น Error จากการ Parse JSON (เช่น โดน Redirect ไปหน้า Login ของ Google)
+    if (error.name === 'SyntaxError') {
+      errorMessage = 'การตอบกลับไม่ใช่ JSON โปรดตรวจสอบการตั้งค่า Deploy ของ Google Apps Script ว่าตั้งสิทธิ์เป็น "Anyone" หรือไม่';
+    } else if (error.message.includes('Failed to fetch')) {
+      errorMessage = 'ไม่สามารถเชื่อมต่อได้ (CORS Error) หรือ URL ผิดพลาด โปรดตรวจสอบการ Deploy Web App';
+    }
+
     Swal.fire({
       icon: 'error',
       title: 'เกิดข้อผิดพลาด',
-      text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่อ',
+      text: errorMessage,
       confirmButtonColor: '#4F46E5'
     });
   } finally {
