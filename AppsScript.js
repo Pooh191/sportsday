@@ -38,7 +38,34 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
-    // 3. การบันทึกข้อมูล (เข้า/ออก) ตามปกติ
+    // 3. ป้องกันการบันทึกซ้ำซ้อน (Validation)
+    if (postData.action === 'เข้า' || postData.action === 'ออก') {
+      const data = sheet.getDataRange().getValues();
+      let latestAction = null;
+      
+      // วนลูปเพื่อหาสถานะล่าสุดของคนคนนี้
+      // data[i][3] คือช่อง "ชื่อ - นามสกุล" (index 3), data[i][1] คือ "รายการ" (index 1)
+      for (let i = 1; i < data.length; i++) {
+        if (data[i][3] === postData.fullName) {
+          latestAction = data[i][1];
+        }
+      }
+
+      if (postData.action === 'เข้า' && latestAction === 'เข้า') {
+        return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "DUPLICATE_ENTRY" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      if (postData.action === 'ออก' && latestAction === 'ออก') {
+        return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "DUPLICATE_EXIT" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      if (postData.action === 'ออก' && latestAction === null) {
+        return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "NOT_FOUND" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    // 4. การบันทึกข้อมูล (เข้า/ออก) ตามปกติ
     sheet.appendRow([
       postData.timestamp,
       postData.action,       // "เข้า" หรือ "ออก"
@@ -46,7 +73,8 @@ function doPost(e) {
       postData.fullName,
       postData.className || "",
       postData.colorGroup || "",
-      postData.reason || ""
+      postData.purpose || "",// คอลัมน์ที่ 7 (เหตุผลที่ออก)
+      postData.reason || ""  // คอลัมน์ที่ 8 (หมายเหตุ)
     ]);
     
     return ContentService.createTextOutput(JSON.stringify({ "status": "success", "message": "Data Saved" }))
@@ -73,7 +101,8 @@ function doGet(e) {
       name: row[3],
       className: row[4],
       color: row[5],
-      reason: row[6]
+      purpose: row[6],
+      reason: row[7]
     }));
     
     return ContentService.createTextOutput(JSON.stringify({ "status": "success", "data": formattedData }))
