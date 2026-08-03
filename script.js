@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (exitForm) {
     exitForm.addEventListener('submit', (e) => handleFormSubmit(e, 'exitForm'));
     fetchStudentDatabase(); // ดึงรายชื่อมาทำ Autocomplete
-    
+
     // ตั้งค่า Autocomplete
     const searchInput = document.getElementById('searchName');
     searchInput.addEventListener('input', handleAutocomplete);
-    
+
     // ปิด dropdown เมื่อคลิกที่อื่น
     document.addEventListener('click', function (e) {
       if (!e.target.closest('.autocomplete-container')) {
@@ -62,9 +62,9 @@ async function handleFormSubmit(e, formId) {
 
   // ใส่ Single Quote (') นำหน้าเพื่อป้องกัน Google Sheets แปลงเป็นวันที่อัตโนมัติ
   let formData = {
-    timestamp: "'" + new Date().toLocaleString('th-TH', { 
-      year: 'numeric', month: 'short', day: 'numeric', 
-      hour: '2-digit', minute: '2-digit', second: '2-digit' 
+    timestamp: "'" + new Date().toLocaleString('th-TH', {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
     })
   };
 
@@ -78,6 +78,7 @@ async function handleFormSubmit(e, formId) {
     const classVal = document.getElementById('className').value;
     formData.className = classVal.startsWith("'") ? classVal : "'" + classVal;
     formData.colorGroup = document.getElementById('colorGroup').value;
+    formData.reason = document.getElementById('entryReason').value;
   } else if (formId === 'exitForm') {
     formData.action = document.getElementById('actionType').value;
     formData.prefix = document.getElementById('namePrefix').value;
@@ -93,7 +94,7 @@ async function handleFormSubmit(e, formId) {
       method: 'POST',
       body: JSON.stringify(formData)
     });
-    
+
     const result = await response.json();
 
     if (result.status === 'success') {
@@ -106,8 +107,8 @@ async function handleFormSubmit(e, formId) {
       }).then(() => {
         document.getElementById(formId).reset();
         if (formId === 'exitForm') {
-           document.getElementById('readonlyClass').value = '';
-           document.getElementById('readonlyColor').value = '';
+          document.getElementById('readonlyClass').value = '';
+          document.getElementById('readonlyColor').value = '';
         }
       });
     } else if (result.status === 'error' && result.message === 'DUPLICATE_ENTRY') {
@@ -144,7 +145,7 @@ async function handleFormSubmit(e, formId) {
   } catch (error) {
     console.error(error);
     let errorMessage = 'ไม่สามารถบันทึกข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่อ';
-    
+
     // ตรวจสอบว่าเป็น Error จากการ Parse JSON (เช่น โดน Redirect ไปหน้า Login ของ Google)
     if (error.name === 'SyntaxError') {
       errorMessage = 'การตอบกลับไม่ใช่ JSON โปรดตรวจสอบการตั้งค่า Deploy ของ Google Apps Script ว่าตั้งสิทธิ์เป็น "Anyone" หรือไม่';
@@ -176,10 +177,10 @@ async function fetchStudentDatabase() {
 
     if (result.status === 'success') {
       const allData = result.data;
-      
+
       // หาชื่อนักเรียนที่ไม่ซ้ำกัน โดยยึดข้อมูลล่าสุดจากคอลัมน์ name
       const uniqueStudents = new Map();
-      
+
       allData.forEach(row => {
         if (row.name && row.action === 'เข้า') {
           // เก็บข้อมูลนักเรียนจากบันทึกการเข้าเท่านั้น
@@ -193,7 +194,7 @@ async function fetchStudentDatabase() {
       });
 
       studentDatabase = Array.from(uniqueStudents.values());
-      
+
       // ปิด Loading และแสดง Form
       document.getElementById('loadingData').style.display = 'none';
       document.getElementById('exitForm').style.display = 'block';
@@ -207,7 +208,7 @@ async function fetchStudentDatabase() {
 function handleAutocomplete(e) {
   const val = e.target.value.toLowerCase();
   const resultsContainer = document.getElementById('autocompleteResults');
-  
+
   // รีเซ็ตค่า readonly
   document.getElementById('readonlyClass').value = '';
   document.getElementById('readonlyColor').value = '';
@@ -220,7 +221,7 @@ function handleAutocomplete(e) {
   }
 
   // ค้นหาใน database
-  const matches = studentDatabase.filter(student => 
+  const matches = studentDatabase.filter(student =>
     student.name.toLowerCase().includes(val)
   );
 
@@ -253,13 +254,13 @@ async function fetchDashboardData() {
   const content = document.getElementById('dashboardContent');
 
   if (SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-    if(loading) loading.innerHTML = '<p style="color:red;">กรุณาตั้งค่า SCRIPT_URL ในไฟล์ script.js ให้ถูกต้อง</p>';
+    if (loading) loading.innerHTML = '<p style="color:red;">กรุณาตั้งค่า SCRIPT_URL ในไฟล์ script.js ให้ถูกต้อง</p>';
     return;
   }
 
-  if(loading) {
-     loading.style.display = 'block';
-     if(content) content.style.display = 'none';
+  if (loading) {
+    loading.style.display = 'block';
+    if (content) content.style.display = 'none';
   }
 
   try {
@@ -276,7 +277,7 @@ async function fetchDashboardData() {
     }
   } catch (error) {
     console.error(error);
-    if(loading) loading.innerHTML = '<p style="color:red;">ไม่สามารถโหลดข้อมูลจาก Google Sheets ได้ กรุณาลองใหม่อีกครั้ง</p>';
+    if (loading) loading.innerHTML = '<p style="color:red;">ไม่สามารถโหลดข้อมูลจาก Google Sheets ได้ กรุณาลองใหม่อีกครั้ง</p>';
   }
 }
 
@@ -313,7 +314,7 @@ function renderDashboard(data) {
   // ------------------------------------------------
   // คำนวณรายชื่อคนที่ "กำลังอยู่นอกโรงเรียน" (สถานะล่าสุดคือ 'ออก')
   // ------------------------------------------------
-  const studentStatus = {}; 
+  const studentStatus = {};
   data.forEach(row => {
     if (row.name) {
       // วนลูปจากเก่าไปใหม่ การบันทึกทับจะทำให้เหลือข้อมูลล่าสุดของแต่ละคน
@@ -330,20 +331,20 @@ function renderDashboard(data) {
   const outsideTbody = document.getElementById('outsideTableBody');
   if (outsideTbody) {
     outsideTbody.innerHTML = '';
-    
+
     if (outsideStudents.length === 0) {
       outsideTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">ไม่มีนักเรียนอยู่นอกโรงเรียนในขณะนี้</td></tr>';
     } else {
       outsideStudents.forEach(row => {
         const tr = document.createElement('tr');
-        
+
         let colorClass = 'badge-ขาว';
-        if(row.color === 'สีแดง') colorClass = 'badge-แดง';
-        else if(row.color === 'สีม่วง') colorClass = 'badge-ม่วง';
-        else if(row.color === 'สีชมพู') colorClass = 'badge-ชมพู';
-        else if(row.color === 'สีแสด') colorClass = 'badge-แสด';
-        else if(row.color === 'สีฟ้า') colorClass = 'badge-ฟ้า';
-        else if(row.color === 'สภานักเรียน') colorClass = 'badge-สภานักเรียน';
+        if (row.color === 'สีแดง') colorClass = 'badge-แดง';
+        else if (row.color === 'สีม่วง') colorClass = 'badge-ม่วง';
+        else if (row.color === 'สีชมพู') colorClass = 'badge-ชมพู';
+        else if (row.color === 'สีแสด') colorClass = 'badge-แสด';
+        else if (row.color === 'สีฟ้า') colorClass = 'badge-ฟ้า';
+        else if (row.color === 'สภานักเรียน') colorClass = 'badge-สภานักเรียน';
 
         const reasonText = row.reason ? `<br><small style="color:#6b7280;">เหตุผล: ${row.reason}</small>` : '';
         const fullName = (row.prefix || '') + ' ' + (row.name || '-');
@@ -380,7 +381,7 @@ function switchTab(tabId) {
   document.getElementById('btnTabOutside').classList.remove('active');
   document.getElementById('tab-recent').style.display = 'none';
   document.getElementById('tab-outside').style.display = 'none';
-  
+
   if (tabId === 'recent') {
     document.getElementById('btnTabRecent').classList.add('active');
     document.getElementById('tab-recent').style.display = 'block';
@@ -415,7 +416,7 @@ async function deleteAllData() {
         method: 'POST',
         body: JSON.stringify({ action: 'deleteAll' })
       });
-      
+
       Swal.fire('ลบสำเร็จ!', 'ข้อมูลทั้งหมดถูกล้างแล้ว', 'success');
       fetchDashboardData();
     } catch (error) {
@@ -444,7 +445,7 @@ async function deleteRow(timestamp) {
         method: 'POST',
         body: JSON.stringify({ action: 'deleteRow', timestampToDelete: timestamp })
       });
-      
+
       fetchDashboardData(); // โหลดข้อมูลใหม่
     } catch (error) {
       console.error(error);
@@ -455,31 +456,31 @@ async function deleteRow(timestamp) {
 
 function viewHistory(name) {
   const history = allDashboardData.filter(row => row.name === name);
-  
+
   const modal = document.getElementById('historyModal');
   const modalName = document.getElementById('modalStudentName');
   const modalContent = document.getElementById('modalHistoryContent');
 
-  if(history.length > 0) {
+  if (history.length > 0) {
     modalName.innerText = `ประวัติ: ${(history[0].prefix || '') + ' ' + name}`;
   } else {
     modalName.innerText = `ประวัติ: ${name}`;
   }
 
   modalContent.innerHTML = '';
-  
+
   if (history.length === 0) {
     modalContent.innerHTML = '<p>ไม่พบประวัติการเข้า-ออก</p>';
   } else {
     // เรียงจากใหม่ไปเก่า
     const sortedHistory = [...history].reverse();
-    
+
     sortedHistory.forEach(item => {
       const typeClass = `type-${item.action}`;
-      const actionBadge = item.action === 'ออก' 
-        ? `<span style="color:#dc2626; font-weight:bold;">ออกนอกโรงเรียน</span>` 
+      const actionBadge = item.action === 'ออก'
+        ? `<span style="color:#dc2626; font-weight:bold;">ออกนอกโรงเรียน</span>`
         : `<span style="color:#16a34a; font-weight:bold;">เข้าโรงเรียน</span>`;
-      
+
       const reasonText = item.reason ? `<div style="font-size: 13px; color: #6b7280; margin-top: 4px;">เหตุผล: ${item.reason}</div>` : '';
 
       let displayTime = item.timestamp || '-';
@@ -511,14 +512,14 @@ function updateRecentTable() {
   const tbody = document.getElementById('recentTableBody');
   if (!tbody) return;
   tbody.innerHTML = '';
-  
+
   let recentData = [...allDashboardData]; // ดึงจาก Global Variable
   recentData.reverse(); // ใหม่ล่าสุดขึ้นก่อน
 
   // Pagination Logic
   const totalRows = recentData.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
-  
+
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
 
@@ -534,19 +535,19 @@ function updateRecentTable() {
 
   paginatedData.forEach(row => {
     const tr = document.createElement('tr');
-    
+
     // ป้ายคณะสี
     let colorClass = 'badge-ขาว';
-    if(row.color === 'สีแดง') colorClass = 'badge-แดง';
-    else if(row.color === 'สีม่วง') colorClass = 'badge-ม่วง';
-    else if(row.color === 'สีชมพู') colorClass = 'badge-ชมพู';
-    else if(row.color === 'สีแสด') colorClass = 'badge-แสด';
-    else if(row.color === 'สีฟ้า') colorClass = 'badge-ฟ้า';
-    else if(row.color === 'สภานักเรียน') colorClass = 'badge-สภานักเรียน';
+    if (row.color === 'สีแดง') colorClass = 'badge-แดง';
+    else if (row.color === 'สีม่วง') colorClass = 'badge-ม่วง';
+    else if (row.color === 'สีชมพู') colorClass = 'badge-ชมพู';
+    else if (row.color === 'สีแสด') colorClass = 'badge-แสด';
+    else if (row.color === 'สีฟ้า') colorClass = 'badge-ฟ้า';
+    else if (row.color === 'สภานักเรียน') colorClass = 'badge-สภานักเรียน';
 
     // ป้ายสถานะเข้าออก
-    const actionBadge = row.action === 'ออก' 
-      ? `<span style="color:#dc2626; font-weight:bold;">${row.action}</span>` 
+    const actionBadge = row.action === 'ออก'
+      ? `<span style="color:#dc2626; font-weight:bold;">${row.action}</span>`
       : `<span style="color:#16a34a; font-weight:bold;">${row.action}</span>`;
 
     // เหตุผล
@@ -579,7 +580,7 @@ function updateRecentTable() {
     `;
     tbody.appendChild(tr);
   });
-  
+
   renderPagination(currentPage, totalPages);
 }
 
